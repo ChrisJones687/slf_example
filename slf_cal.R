@@ -6,10 +6,7 @@ library(folderfun)
 library(doParallel)
 # library(plyr)
 
-# setff("In", "H:/Shared drives/Data/Raster/Regional/slf_1km_larger_extent/")
-setff("In", "H:/Shared drives/Data/Raster/Regional/SLF_1km/")
-setff("cals", "H:/Shared drives/APHIS  Projects/PoPS/Case Studies/spotted_latternfly/slf_data_redone_with_all_data_sources/calibration and assessment/")
-# setff("In2", "H:/Shared drives/Data/Vector/USA/Pest_Pathogen Occurrence/Spotted_Lanternfly/")
+setff("In", "H:/Shared drives/Data/PoPS Runs/Spotted Lanternfly/SLF_1km/")
 
 
 infected_years_file <- ffIn("slf_2020_cum.tif")
@@ -22,9 +19,9 @@ number_of_generations <- 7
 generation_size <- 10
 infected_file <- ffIn("slf_2019_cum.tif")
 host_file <- ffIn("toh.tif")
-total_populations_file <- ffIn("all_plants.tif")
+total_populations_file <- ffIn("total_population.tif")
 temp <- TRUE
-temperature_coefficient_file <- ffIn("temp_2020.tif")
+temperature_coefficient_file <- ffIn("temp_coeff_2020.tif")
 precip <- FALSE
 precipitation_coefficient_file <- ""
 model_type <- "SI"
@@ -52,7 +49,7 @@ treatment_dates <- c('2020-12-24')
 treatments_file <- ""
 treatment_method <- "ratio"
 natural_kernel_type <- "cauchy"
-anthropogenic_kernel_type <- "cauchy"
+anthropogenic_kernel_type <- "network"
 natural_dir <- "NONE"
 natural_kappa <- 0
 anthropogenic_dir <- "NONE"
@@ -84,11 +81,11 @@ exposed_file <- ""
 verbose <- TRUE
 write_outputs <- "None"
 output_folder_path <- ""
-network_filename <- "H:/Shared drives/Data/Table/USA/railroad_segments.csv"
+network_filename <- ffIn("railroad_segments.csv")
 network_movement <- "walk"
-use_distance <- FALSE
-use_rmse <- FALSE
-use_mcc = TRUE
+success_metric <- "mcc and RMSE"
+use_initial_condition_uncertainty <- FALSE
+use_host_uncertainty <- FALSE
 
 
 slf_cal <- calibrate(infected_years_file,
@@ -165,6 +162,6 @@ slf_cal <- calibrate(infected_years_file,
                      output_folder_path,
                      network_filename,
                      network_movement,
-                     use_distance,
-                     use_rmse,
-                     use_mcc)
+                     success_metric,
+                     use_initial_condition_uncertainty,
+                     use_host_uncertainty)

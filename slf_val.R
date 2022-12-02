@@ -6,16 +6,15 @@ library(folderfun)
 library(doParallel)
 # library(plyr)
 
-setff("In", "H:/Shared drives/Data/Raster/Regional/SLF_1km/")
-setff("cals", "H:/Shared drives/APHIS  Projects/PoPS/Case Studies/spotted_latternfly/slf_data_redone_with_all_data_sources/calibration and assessment/")
+setff("In", "H:/Shared drives/Data/PoPS Runs/Spotted Lanternfly/SLF_1km/")
 
 ## cauchy only
 infected_years_file <- ffIn("slf_2020_cum.tif")
 infected_file <- ffIn("slf_2019_cum.tif")
 host_file <- ffIn("toh.tif")
-total_populations_file <- ffIn("all_plants.tif")
+total_populations_file <- ffIn("total_population.tif")
 temp <- TRUE
-temperature_coefficient_file <- ffIn("temp_2020.tif")
+temperature_coefficient_file <- ffIn("temp_coeff_2020.tif")
 precip <- FALSE
 precipitation_coefficient_file <- ""
 model_type <- "SI"
@@ -39,7 +38,7 @@ treatment_dates <- c('2020-12-24')
 treatments_file <- ""
 treatment_method <- "ratio"
 natural_kernel_type <- "cauchy"
-anthropogenic_kernel_type <- "cauchy"
+anthropogenic_kernel_type <- "network"
 natural_dir <- "NONE"
 natural_kappa <- 0
 anthropogenic_dir <- "NONE"
@@ -50,17 +49,15 @@ mask <- NULL
 output_frequency <- "year"
 movements_file = ""
 use_movements <- FALSE
+
+## Number of iterations is kept low just for testing make sure to raise it for actual analysis
 number_of_iterations <- 10
 number_of_cores <- 5
+
 success_metric <- "quantity"
-means <- read.csv(ffcals("actual_weights/2019_means.csv"))
-means[5:8,] <- 0
-means[1, 1] <- 1.84
-parameter_means <- t(means)
+parameter_means <- t(read.table(ffIn("Calibration/actual_weights/2020_means.csv")))
 parameter_means <- parameter_means[1,]
-parameter_cov_matrix <- read.csv(ffcals("actual_weights/2019_cov_matrix.csv"))
-parameter_cov_matrix[5:8, ] <- 0
-parameter_cov_matrix[ , 5:8] <- 0
+parameter_cov_matrix <- read.table(ffIn("Calibration/actual_weights/2020_cov_matrix.csv"))
 output_frequency <- "year"
 output_frequency_n <- 1
 movements_file <- ""
@@ -83,8 +80,7 @@ exposed_file <- ""
 write_outputs <- "None"
 output_folder_path <- ""
 point_file <- ""
-network_filename <- "H:/Shared drives/Data/Table/USA/railroad_segments.csv"
-# network_filename <- "H:/Shared drives/Data/Table/USA/US_primary_secondary_roads_segments.csv"
+network_filename <- ffIn("railroad_segments.csv")
 use_distance <- FALSE
 use_configuration <- FALSE
 network_movement <- "walk"
@@ -93,6 +89,8 @@ survival_rate_month <- 3
 survival_rate_day <- 15
 survival_rates_file <- ""
 use_lethal_temperature <- FALSE
+use_initial_condition_uncertainty <- FALSE
+use_host_uncertainty <- FALSE
 
 
 slf_val <- PoPS::validate(infected_years_file,
@@ -162,5 +160,7 @@ slf_val <- PoPS::validate(infected_years_file,
                           point_file = "",
                           network_filename,
                           network_movement,
-                          use_distance,
-                          use_configuration)
+                          use_initial_condition_uncertainty,
+                          use_host_uncertainty)
+
+val_2020 <- slf_val$output_step_1

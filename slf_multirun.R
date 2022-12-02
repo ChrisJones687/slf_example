@@ -11,15 +11,9 @@ setff("In", "H:/Shared drives/Data/PoPS Runs/Spotted Lanternfly/SLF_1km/")
 infected_file <- ffIn("slf_2020_cum.tif")
 host_file <- ffIn("toh.tif")
 total_populations_file <- ffIn("total_population.tif")
-means <- read.csv(ffIn("Calibration/actual_weights/2019_means.csv"))
-means[5:8,] <- 0
-parameter_means <- t(means)
+parameter_means <- t(read.table(ffIn("Calibration/actual_weights/2020_means.csv")))
 parameter_means <- parameter_means[1,]
-parameter_means[7] <- 2200
-parameter_means[8] <- 367000
-parameter_cov_matrix <- read.csv(ffIn("Calibration/actual_weights/2019_cov_matrix.csv"))
-parameter_cov_matrix[5:8, ] <- 0
-parameter_cov_matrix[ , 5:8] <- 0
+parameter_cov_matrix <- read.table(ffIn("Calibration/actual_weights/2020_cov_matrix.csv"))
 temp <- TRUE
 temperature_coefficient_file <- ffIn("temp_coeff_2020.tif")
 precip <- FALSE
@@ -79,7 +73,7 @@ exposed_file <- ""
 mask <- NULL
 write_outputs <- "None"
 output_folder_path <- ""
-network_filename <- "H:/Shared drives/Data/Table/USA/railroad_segments.csv"
+network_filename <- ffIn("railroad_segments.csv")
 network_movement <- "walk"
 use_initial_condition_uncertainty <- FALSE
 use_host_uncertainty <- FALSE
@@ -153,3 +147,5 @@ slf_multirun <- pops_multirun(infected_file,
                               network_movement,
                               use_initial_condition_uncertainty,
                               use_host_uncertainty)
+
+plot(slf_multirun$probability)
