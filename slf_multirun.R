@@ -1,26 +1,27 @@
 ## Setup multirun
-# remotes::install_github("ncsu-landscape-dynamics/rpops")
+# remotes::install_github("ncsu-landscape-dynamics/rpops", ref = "v2.0.1", force = TRUE)
 library(PoPS)
 library(terra)
 library(folderfun)
 library(doParallel)
 # library(plyr)
 
-setff("In", "H:/Shared drives/Data/Raster/Regional/SLF_1km/")
-setff("cals", "H:/Shared drives/APHIS  Projects/PoPS/Case Studies/spotted_latternfly/slf_data_redone_with_all_data_sources/calibration and assessment/")
+setff("In", "H:/Shared drives/Data/PoPS Runs/Spotted Lanternfly/SLF_1km/")
 
 infected_file <- ffIn("slf_2020_cum.tif")
 host_file <- ffIn("toh.tif")
-total_populations_file <- ffIn("all_plants.tif")
-means <- read.csv(ffcals("actual_weights/2019_means.csv"))
+total_populations_file <- ffIn("total_population.tif")
+means <- read.csv(ffIn("Calibration/actual_weights/2019_means.csv"))
 means[5:8,] <- 0
 parameter_means <- t(means)
 parameter_means <- parameter_means[1,]
-parameter_cov_matrix <- read.csv(ffcals("actual_weights/2019_cov_matrix.csv"))
+parameter_means[7] <- 2200
+parameter_means[8] <- 367000
+parameter_cov_matrix <- read.csv(ffIn("Calibration/actual_weights/2019_cov_matrix.csv"))
 parameter_cov_matrix[5:8, ] <- 0
 parameter_cov_matrix[ , 5:8] <- 0
 temp <- TRUE
-temperature_coefficient_file <- ffIn("temp_2020.tif")
+temperature_coefficient_file <- ffIn("temp_coeff_2020.tif")
 precip <- FALSE
 precipitation_coefficient_file <- ""
 model_type <- "SI"
@@ -48,7 +49,7 @@ treatment_dates <- c('2020-12-24')
 treatments_file <- ""
 treatment_method <- "ratio"
 natural_kernel_type <- "cauchy"
-anthropogenic_kernel_type <- "cauchy"
+anthropogenic_kernel_type <- "network"
 natural_dir <- "NONE"
 anthropogenic_dir <- "NONE"
 number_of_iterations <- 10
@@ -80,6 +81,9 @@ write_outputs <- "None"
 output_folder_path <- ""
 network_filename <- "H:/Shared drives/Data/Table/USA/railroad_segments.csv"
 network_movement <- "walk"
+use_initial_condition_uncertainty <- FALSE
+use_host_uncertainty <- FALSE
+
 
 slf_multirun <- pops_multirun(infected_file,
                               host_file,
@@ -146,4 +150,6 @@ slf_multirun <- pops_multirun(infected_file,
                               write_outputs,
                               output_folder_path,
                               network_filename,
-                              network_movement)
+                              network_movement,
+                              use_initial_condition_uncertainty,
+                              use_host_uncertainty)
